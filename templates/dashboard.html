@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section dashboard-shell">
+    <div class="container dashboard-grid">
+      <aside class="panel sidebar-panel">
+        <p class="eyebrow">Profile</p>
+        <h3>{{ user.get_full_name|default:user.username }}</h3>
+        <p>{{ account_type }}</p>
+
+        {% if user.role == 'admin' %}
+          <a href="{% url 'product_create' %}" class="button button-primary full">Add new product</a>
+        {% endif %}
+
+        {% if user.role == 'admin' %}
+          <div class="mini-metrics">
+            <div>
+              <span>Customers</span>
+              <strong>{{ total_customers|default:0 }}</strong>
+            </div>
+            <div>
+              <span>Low stock</span>
+              <strong>{{ low_stock_products|length|default:0 }}</strong>
+            </div>
+          </div>
+        {% endif %}
+      </aside>
+
+      <div class="panel content-panel">
+        <div class="panel-header dashboard-header">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h1>{{ account_type }} dashboard</h1>
+          </div>
+          {% if user.role == 'admin' %}
+            <div class="header-revenue">
+              <small>Total revenue</small>
+              <strong>₦{{ total_revenue|default:0 }}</strong>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if user.role == 'admin' or user.role == 'sales_girl' %}
+          <div class="stats-row">
+            <div class="stat-box">
+              <span>Total orders</span>
+              <strong>{{ total_orders|default:0 }}</strong>
+            </div>
+            <div class="stat-box">
+              <span>Paid orders</span>
+              <strong>{{ paid_orders|default:0 }}</strong>
+            </div>
+            <div class="stat-box">
+              <span>Pending</span>
+              <strong>{{ pending_orders|default:0 }}</strong>
+            </div>
+            {% if user.role == 'admin' %}
+              <div class="stat-box">
+                <span>Products</span>
+                <strong>{{ products|length|default:0 }}</strong>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if user.role == 'admin' or user.role == 'sales_girl' %}
+          <div class="analytics-panel">
+            <div class="panel-header analytics-head">
+              <h3>Sales analytics</h3>
+            </div>
+            <div class="chart-bars">
+              {% for value in monthly_values %}
+                <div class="bar-wrap">
+                  <div class="bar" style="height: {{ value|floatformat:0|default:0 }}px; max-height: 160px;"></div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="chart-labels">
+              {% for label in monthly_labels %}
+                <span>{{ label }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if user.role == 'admin' %}
+          <div class="management-block">
+            <div class="panel-header">
+              <h3>Inventory management</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for product in products %}
+                    <tr>
+                      <td>{{ product.title }}</td>
+                      <td>{{ product.category.name }}</td>
+                      <td>{% if product.stock <= 5 %}<span class="low-stock">{{ product.stock }}</span>{% else %}{{ product.stock }}{% endif %}</td>
+                      <td>₦{{ product.price }}</td>
+                      <td>
+                        <div class="action-group">
+                          <a href="{% url 'product_edit' product.pk %}" class="button button-secondary small">Edit</a>
+                          <a href="{% url 'product_delete' product.pk %}" class="button button-light small danger-link">Delete</a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr><td colspan="5">No products yet.</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="orders-block">
+          <div class="panel-header">
+            <h3>Recent orders</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                  {% if user.role == 'admin' or user.role == 'sales_girl' %}<th>Update</th>{% endif %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                  <tr>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.customer.username }}</td>
+                    <td>{{ order.items.count }}</td>
+                    <td><span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                    <td>₦{{ order.total_amount }}</td>
+                    {% if user.role == 'admin' or user.role == 'sales_girl' %}
+                      <td>
+                        <form method="post" action="{% url 'update_order_status' order.id %}">
+                          {% csrf_token %}
+                          <select name="status">
+                            {% for value, label in order._meta.get_field('status').choices %}
+                              <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                          </select>
+                          <button type="submit" class="button button-secondary small">Save</button>
+                        </form>
+                      </td>
+                    {% endif %}
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="6">No orders yet.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

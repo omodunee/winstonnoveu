@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container narrow-container">
+      <div class="panel success-panel">
+        <p class="eyebrow">Order placed</p>
+        <h1>Thank you for your order.</h1>
+        <p>Your order number is <strong>{{ order.order_number }}</strong>.</p>
+
+        <div class="order-summary-box">
+          <div><span>Delivery option</span><strong>{{ order.get_delivery_option_display }}</strong></div>
+          <div><span>Delivery fee</span><strong>₦{{ order.delivery_fee }}</strong></div>
+          <div><span>Total</span><strong>₦{{ order.total_amount }}</strong></div>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="button button-primary" id="paystack-button">Pay with Paystack</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    document.getElementById('paystack-button')?.addEventListener('click', function (event) {
+      event.preventDefault();
+      const handler = PaystackPop.setup({
+        key: '{{ paystack_public_key }}',
+        email: '{{ request.user.email|default:'customer@example.com' }}',
+        amount: '{{ order.total_amount|floatformat:"0" }}' * 100,
+        currency: 'NGN',
+        ref: '{{ order.order_number }}',
+        callback: function(response) {
+          const form = event.target.closest('form');
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'reference';
+          input.value = response.reference;
+          form.appendChild(input);
+          form.submit();
+        },
+        onClose: function() {
+          alert('Payment window closed. Your order is still saved.');
+        }
+      });
+      handler.openIframe();
+    });
+  </script>
+{% endblock %}

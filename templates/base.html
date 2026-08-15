@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Winstonoveu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="brand">
+          <span class="brand-mark">W</span>
+          <span>Winstonoveu</span>
+        </a>
+
+        <nav class="main-nav">
+          <a href="{% url 'home' %}">Home</a>
+          <a href="#">New In</a>
+          <a href="#">Style Edit</a>
+          <a href="{% url 'occasions' %}">Occasions</a>
+        </nav>
+
+        <div class="nav-actions">
+          {% if user.is_authenticated %}
+            {% if user.is_staff %}
+              <a href="/admin/" class="nav-link">Admin</a>
+            {% endif %}
+            <a href="{% url 'cart' %}" class="nav-link">Cart</a>
+            <a href="{% url 'logout' %}" class="button button-light">Logout</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="nav-link">Login</a>
+            <a href="{% url 'register' %}" class="button button-light">Join</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    {% if messages %}
+      <div class="container messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <h4>Winstonoveu</h4>
+          <p>Luxury statement fashion for the bold, expressive, and effortlessly iconic.</p>
+        </div>
+        <div>
+          <h5>Explore</h5>
+          <ul>
+            <li>New Arrivals</li>
+            <li>Best Sellers</li>
+            <li>Delivery</li>
+          </ul>
+        </div>
+        <div>
+          <h5>Support</h5>
+          <ul>
+            <li>Orders</li>
+            <li>Returns</li>
+            <li>Contact</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </body>
+  <div class="image-modal" id="image-modal" role="dialog" aria-hidden="true">
+    <div class="modal-card">
+      <button class="close-btn" id="modal-close">Close</button>
+      <img id="modal-image" src="" alt="" />
+      <div class="caption">
+        <div id="modal-title"></div>
+        <div><button class="button button-primary" id="modal-action">Add to cart</button></div>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'js/ui.js' %}"></script>
+</html>

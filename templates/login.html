@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section auth-shell">
+    <div class="container auth-card">
+      <h1>Welcome back</h1>
+      <form method="post">
+        {% csrf_token %}
+        <div class="field-group">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" required />
+        </div>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" required />
+        </div>
+        <button type="submit" class="button button-primary full">Login</button>
+      </form>
+      <p class="auth-link">Need an account? <a href="{% url 'register' %}">Create one</a></p>
+    </div>
+  </section>
+{% endblock %}

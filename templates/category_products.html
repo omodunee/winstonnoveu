@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{{ category.name }}</p>
+          <h2>{{ category.name }} collection</h2>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        {% for product in products %}
+          <article class="product-card">
+            <div class="product-image-wrap">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" />
+              {% else %}
+                <div class="placeholder-image">{{ product.title|slice:':1' }}</div>
+              {% endif %}
+            </div>
+            <div class="product-details">
+              <h3>{{ product.title }}</h3>
+              <div class="product-meta-row">
+                <strong>₦{{ product.price }}</strong>
+                <span>{{ product.size }}</span>
+              </div>
+              <a href="{% url 'product_detail' product.slug %}" class="button button-primary full">View</a>
+            </div>
+          </article>
+        {% empty %}
+          <p>No products in this category yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

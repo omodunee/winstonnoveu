@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container narrow-container">
+      <div class="panel">
+        <div class="panel-header">
+          <h1>{{ title }}</h1>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="button button-primary">Save product</button>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}

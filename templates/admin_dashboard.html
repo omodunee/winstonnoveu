@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section admin-dashboard">
+    <div class="container">
+      <div class="admin-head">
+        <h1>Admin dashboard</h1>
+        <div class="admin-actions">
+          <a href="{% url 'product_create' %}" class="button button-primary">Add product</a>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <aside class="panel admin-sidebar">
+          <div class="metric">
+            <small>Products</small>
+            <strong>{{ products|length }}</strong>
+          </div>
+          <div class="metric">
+            <small>Customers</small>
+            <strong>{{ total_customers|default:0 }}</strong>
+          </div>
+          <div class="metric">
+            <small>Low stock</small>
+            <strong>{{ low_stock_products|length|default:0 }}</strong>
+          </div>
+        </aside>
+
+        <div class="panel admin-main">
+          <h3>Inventory</h3>
+          <div class="table-wrap">
+            <table class="inventory-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Stock</th>
+                  <th>Price</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in products %}
+                  <tr>
+                    <td class="thumb-col">
+                      {% if product.image %}
+                        <a href="#" class="image-open" data-image="{{ product.image.url }}" data-title="{{ product.title }}"><img src="{{ product.image.url }}" alt="{{ product.title }}" class="thumb" /></a>
+                      {% else %}
+                        <div class="thumb placeholder">{{ product.title|slice:':1' }}</div>
+                      {% endif %}
+                    </td>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>{% if product.stock <= 5 %}<span class="low-stock">{{ product.stock }}</span>{% else %}{{ product.stock }}{% endif %}</td>
+                    <td>₦{{ product.price }}</td>
+                    <td class="actions-col">
+                      <a href="{% url 'product_edit' product.pk %}" class="button button-secondary small">Edit</a>
+                      <a href="{% url 'product_delete' product.pk %}" class="button danger-link small">Delete</a>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="6">No products yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

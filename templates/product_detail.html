@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section product-detail-page soft-bg">
+    <div class="container detail-grid">
+      <div class="detail-gallery">
+        <div class="detail-media">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="detail-main-image" />
+          {% else %}
+            <div class="placeholder-detail">{{ product.title|slice:':1' }}</div>
+          {% endif %}
+          <div class="image-gradient"></div>
+        </div>
+      </div>
+
+      <div class="detail-copy panel">
+        <p class="eyebrow">{{ product.category.name }}</p>
+        <h1>{{ product.title }}</h1>
+        <div class="price-row">
+          <span class="price">₦{{ product.price }}</span>
+          <span class="stock">{{ product.stock }} in stock</span>
+        </div>
+
+        <div class="detail-specs">
+          <div><span>Type</span><strong>{{ product.product_type|title }}</strong></div>
+          <div><span>Colour</span><strong>{{ product.color }}</strong></div>
+          <div><span>Size</span><strong>{{ product.size }}</strong></div>
+          <div><span>Material</span><strong>{{ product.material|default:'Premium fabric' }}</strong></div>
+        </div>
+
+        <div class="product-description">
+          {{ product.description|linebreaks }}
+        </div>
+
+        <form method="post" action="{% url 'add_to_cart' %}">
+          {% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ product.id }}" />
+          <div class="purchase-row">
+            <label for="quantity">Qty</label>
+            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}" />
+          </div>
+          <button type="submit" class="button button-primary">Add to cart</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft-bg">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">More like this</p>
+          <h2>Related styles</h2>
+        </div>
+      </div>
+      <div class="product-grid">
+        {% for item in related_products %}
+          <article class="product-card">
+            <div class="product-image-wrap">
+              {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" />
+              {% else %}
+                <div class="placeholder-image">{{ item.title|slice:':1' }}</div>
+              {% endif %}
+            </div>
+            <div class="product-details">
+              <h3>{{ item.title }}</h3>
+              <div class="product-meta-row">
+                <strong>₦{{ item.price }}</strong>
+                <span>{{ item.size }}</span>
+              </div>
+              <a href="{% url 'product_detail' item.slug %}" class="button button-primary full">See item</a>
+            </div>
+          </article>
+        {% empty %}
+          <p>No related items right now.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

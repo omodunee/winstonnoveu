@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section auth-shell">
+    <div class="container auth-card">
+      <h1>Create account</h1>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="field-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}<small>{{ field.errors }}</small>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="button button-primary full">Register</button>
+      </form>
+      <p class="auth-link">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    </div>
+  </section>
+{% endblock %}
