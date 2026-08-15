@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">New season drop</p>
+        <h1>Fashion that feels like a statement.</h1>
+        <p class="hero-text">Discover elevated silhouettes, rich colors, and standout essentials made for every moment.</p>
+        <div class="hero-actions">
+          <a href="#shop-now" class="button button-primary">Shop now</a>
+          <a href="#featured" class="button button-secondary">Featured</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card tall-card">Luxury</div>
+        <div class="hero-card small-card">Editorial</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="featured">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Editor's picks</p>
+          <h2>Featured pieces</h2>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        {% for product in featured_products %}
+          <article class="product-card">
+            <div class="product-image-wrap">
+              {% if product.image %}
+                <a href="#" class="image-open" data-image="{{ product.image.url }}" data-title="{{ product.title }}">
+                  <img src="{{ product.image.url }}" alt="{{ product.title }}" />
+                  <div class="overlay"><h4>{{ product.title }}</h4></div>
+                </a>
+              {% else %}
+                <div class="placeholder-image">{{ product.title|slice:':1' }}</div>
+              {% endif %}
+            </div>
+            <div class="product-details">
+              <div class="product-meta">
+                <span>{{ product.product_type|title }}</span>
+                <span>{{ product.color }}</span>
+              </div>
+              <h3>{{ product.title }}</h3>
+              <div class="product-meta-row">
+                <strong>₦{{ product.price }}</strong>
+                <span>{{ product.size }}</span>
+              </div>
+              <a href="{% url 'product_detail' product.slug %}" class="button button-primary full">View details</a>
+            </div>
+          </article>
+        {% empty %}
+          <p>No featured products yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft-bg" id="shop-now">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Collection</p>
+          <h2>Shop the latest drops</h2>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        {% for product in products %}
+          <article class="product-card">
+            <div class="product-image-wrap">
+              {% if product.image %}
+                <a href="#" class="image-open" data-image="{{ product.image.url }}" data-title="{{ product.title }}">
+                  <img src="{{ product.image.url }}" alt="{{ product.title }}" />
+                  <div class="overlay"><h4>{{ product.title }}</h4></div>
+                </a>
+              {% else %}
+                <div class="placeholder-image">{{ product.title|slice:':1' }}</div>
+              {% endif %}
+            </div>
+            <div class="product-details">
+              <div class="product-meta">
+                <span>{{ product.product_type|title }}</span>
+                <span>{{ product.color }}</span>
+              </div>
+              <h3>{{ product.title }}</h3>
+              <div class="product-meta-row">
+                <strong>₦{{ product.price }}</strong>
+                <span>{{ product.size }}</span>
+              </div>
+              <a href="{% url 'product_detail' product.slug %}" class="button button-primary full">View details</a>
+            </div>
+          </article>
+        {% empty %}
+          <p class="empty-state">No products available right now. Check back soon.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

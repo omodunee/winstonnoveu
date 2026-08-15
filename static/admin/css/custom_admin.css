@@ -1,0 +1,5 @@
+/* Simple admin styling for Winstonoveu */
+.model-product .field-image_preview img { border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+.field-total_sold, .field-revenue_generated { font-weight: 700; }
+.changeform .inline-group { background: rgba(255,255,255,0.02); border-radius:8px; padding:8px; }
+#content-main { max-width: 1100px; }

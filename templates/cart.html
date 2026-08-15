@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container narrow-container">
+      <div class="panel">
+        <div class="panel-header">
+          <h1>Your cart</h1>
+        </div>
+
+        {% if cart.items.all %}
+          <div class="cart-table">
+            {% for item in cart.items.all %}
+              <div class="cart-item-row">
+                <div class="cart-product">
+                  {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" />
+                  {% else %}
+                    <div class="mini-thumb">{{ item.product.title|slice:':1' }}</div>
+                  {% endif %}
+                  <div>
+                    <strong>{{ item.product.title }}</strong>
+                    <small>{{ item.product.color }} / {{ item.product.size }}</small>
+                  </div>
+                </div>
+
+                <div class="quantity-box">
+                  <form method="post" action="{% url 'update_cart_item' item.id %}">
+                    {% csrf_token %}
+                    <label>Qty</label>
+                    <input type="number" name="quantity" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}" />
+                    <button type="submit" class="button button-secondary small">Update</button>
+                  </form>
+                </div>
+
+                <div class="price-box">
+                  <strong>₦{{ item.item_total }}</strong>
+                  <a href="{% url 'remove_cart_item' item.id %}" class="text-link">Remove</a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="cart-summary">
+            <div>
+              <span>Subtotal</span>
+              <strong>₦{{ cart.total_price }}</strong>
+            </div>
+            <a href="{% url 'checkout' %}" class="button button-primary">Proceed to checkout</a>
+          </div>
+        {% else %}
+          <div class="empty-state-box">
+            <p>Your cart is empty. Start shopping the latest drops.</p>
+            <a href="{% url 'home' %}" class="button button-primary">Continue shopping</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Occasions</p>
+          <h2>Shop by category</h2>
+        </div>
+      </div>
+
+      <div class="category-grid">
+        {% for category in categories %}
+          <a class="category-card" href="{% url 'category_products' category.slug %}">
+            {% if category.image %}
+              <img src="{{ category.image.url }}" alt="{{ category.name }}" />
+            {% else %}
+              <div class="placeholder-image">{{ category.name|slice:':1' }}</div>
+            {% endif %}
+            <div class="category-info">
+              <h3>{{ category.name }}</h3>
+              <p>{{ category.description }}</p>
+            </div>
+          </a>
+        {% empty %}
+          <p>No categories found.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
